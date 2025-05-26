@@ -1,0 +1,1016 @@
+{
+  "name": "Chatbot con Dashboard (restaurante)",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Preparar datos').item.json.usermessage }}",
+        "options": {
+          "systemMessage": "=# Rol\nEres Sofía, asistente virtual del Restaurante pizza Hut. Tu tarea es ayudar a los usuarios a obtener informacion de nuestra empresa, horarios, menu, promociones, ubicacion etc\n\nActúas como un asesor virtual amable, persuasivo y bien informado de la pizzería “Pizzería HUT”. Tu misión es ayudar al cliente de forma clara, cálida y efectiva, **guiándolo naturalmente a realizar su pedido** y **nunca inventando información**.\n\nTienes acceso a una base de conocimientos que contiene todo lo necesario: menú, promociones, ubicación, horarios, servicios, políticas de envío y más.\n\n🔑 Principios clave:\n\n1. **No debes inventar información bajo ninguna circunstancia.**  \n   Si no encuentras una respuesta confiable o no está en los documentos disponibles, debes indicarlo de forma clara y cordial, y ofrecer ayuda humana si es necesario.\n\n2. **Puedes derivar la conversación a un humano si:**\n   - El cliente lo solicita explícitamente (ej. \"quiero hablar con alguien\").\n   - No tienes suficiente información para responder con certeza.\n\n   En esos casos, di algo como:  \n   *“Déjame pedir ayuda a uno de nuestros asesores humanos para darte una mejor respuesta.”*\n\n3. **Tu estilo es persuasivo, natural y enfocado en guiar al cliente a realizar un pedido.**\n   Usa expresiones como:\n   - “¿Te gustaría que te recomiende una pizza según tus gustos?”\n   - “Puedo ayudarte a hacer tu pedido ahora mismo si deseas.”\n   - “Tenemos promociones perfectas para compartir en familia hoy.”\n\n4. **Cuando respondas sobre el menú**, ofrece recomendaciones deliciosas, menciona ingredientes atractivos y destaca beneficios como combos o entrega rápida.\n\n5. **Cuando hables de promociones**, enfócate en el valor para el cliente y cómo aprovecharlas hoy mismo.\n\n6. **Siempre finaliza con una invitación a la acción**: hacer un pedido, recibir ayuda, o explorar opciones.\n\nFormato sugerido para responder:\n- Introducción cálida.\n- Sugerencia/recomendación según la intención del cliente.\n- Invitación a pedir o recibir asistencia personalizada.\n\nEjemplo:\n> ¡Hola! Bienvenido a Pizzería HUT 🍕. Buscas algo delicioso hoy?? >  \n> También tenemos un combo familiar increíble por solo $14.99.  \n> ¿Te gustaría que te ayude a hacer tu pedido ahora mismo?\n\nSi no puedes responder con seguridad:\n> No tengo esa información exacta en este momento. ¿Te gustaría que uno de nuestros asesores humanos te ayude directamente?\n\nRecuerda: **sé amable, sé útil y nunca inventes datos.**\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2400,
+        0
+      ],
+      "id": "c600a449-9965-4f14-932a-3fc03a150b79",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2880,
+        360
+      ],
+      "id": "81bae9b6-bdc4-485a-9104-ab67976a0207",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "GohJfb0ApNvV69Sm",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2680,
+        740
+      ],
+      "id": "42e6f59b-8f65-4676-ad18-2661779f2ba6",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "GohJfb0ApNvV69Sm",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "Informacion Restaurante",
+          "mode": "list",
+          "cachedResultName": "Informacion Restaurante"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        2660,
+        540
+      ],
+      "id": "a58cec90-6a2e-40cd-b625-6d3c85078ea9",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "rdNcwtVOv9IJ9oTW",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "informacionempresa",
+        "description": "Esta herramienta tiene la informacion del Restaurante pizzeria Hut"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        2740,
+        200
+      ],
+      "id": "3bde9d07-29ea-49d2-91a4-987b145fb540",
+      "name": "InformacionEmpresa"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "920692b6-e11e-4204-b5d8-e37a8aebfb76",
+      "name": "WhatsApp Trigger",
+      "webhookId": "e15238f8-921b-48e6-9658-a3f916948a19",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "ShXxaUiUmueXphcD",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "511181228744198",
+        "recipientPhoneNumber": "={{ $('Preparar datos').item.json.contacts[0].wa_id }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        2980,
+        0
+      ],
+      "id": "690b4419-5995-4958-9b36-ca2469793ab1",
+      "name": "WhatsApp Business Cloud",
+      "webhookId": "cf0cb0ee-cc3a-428b-8844-426d01a5abf5",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "LgPL35ZNq9HfHBIs",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Preparar datos').item.json.contacts[0].wa_id }}",
+        "contextWindowLength": 3
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        2540,
+        -160
+      ],
+      "id": "d31f6b5c-0bfc-4fc9-81a9-280660e09a84",
+      "name": "Postgres Chat Memory",
+      "notesInFlow": false,
+      "credentials": {
+        "postgres": {
+          "id": "hdUZRenROAXo2iau",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2340,
+        -180
+      ],
+      "id": "b9acd8f9-93fa-4488-b747-9c7389ecd0e4",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "GohJfb0ApNvV69Sm",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $('Preparar datos').item.json.usermessage }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "atencion humana",
+              "description": "=Tu tarea es identificar si un mensaje requiere intervención humana.  Responde únicamente con \"sí\" o \"no\".  Un mensaje pertenece a la categoría \"atencion_humana\" si: - El usuario expresa frustración, confusión o molestia - Indica que el bot no le ayudó o que no entiende la respuesta - Solicita explícitamente hablar con una persona o humano - Reporta un problema, error o situación que necesita atención especial  Ejemplos que **sí** requieren atención humana: - “Quiero hablar con alguien” - “Esto no me ayuda” - “No entendí nada” - “Necesito asistencia urgente” - “Tengo un reclamo” - “Hay un problema con mi pedido” - “No me está funcionando”  Ejemplos que **no** requieren atención humana: - “Hola” - “Quiero ver las promociones” - “Muéstrame el menú” - “A qué hora abren” - “Cómo hago un pedido”  Clasifica el siguiente mensaje: “{{ $json[\"message\"] }}”  Responde solo con:   **sí** → si el mensaje requiere atención humana   **no** → si no la requiere"
+            },
+            {
+              "category": "flujo bot",
+              "description": "=Tu tarea es determinar si un mensaje indica que el usuario quiere continuar la conversación con el bot.  Responde únicamente con \"sí\" o \"no\".  Un mensaje pertenece a la categoría \"flujo_bot\" si: - Es un saludo o inicio de conversación: \"hola\", \"buenas\", \"qué tal\" - Contiene preguntas o peticiones que el bot puede resolver: \"quiero agendar\", \"muéstrame el menú\", \"qué promociones tienen\", \"cómo pido\", \"qué horarios manejan\" - Muestra interés por productos, servicios, horarios, ubicación, precios o disponibilidad - No incluye frustración, quejas ni solicitudes de ayuda humana  Ejemplos válidos para \"flujo_bot\": - “Quiero pedir una pizza” - “Tienen horarios por la tarde?” - “Hola, ¿cómo estás?” - “Quiero saber si hacen envíos al sur” - “Cuánto cuesta una pizza grande?”  Ejemplos que NO son \"flujo_bot\": - “Esto no sirve” - “Quiero hablar con un humano” - “Necesito ayuda urgente” - “No me entiendes” - “Esto no me ayuda”  Clasifica el siguiente mensaje: “{{ $json[\"message\"] }}”  Responde solo con:   **sí** → si pertenece a \"flujo_bot\"   **no** → si no pertenece"
+            }
+          ]
+        },
+        "options": {
+          "fallback": "other"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        1480,
+        -480
+      ],
+      "id": "f2ec2157-ed9d-4e64-a972-90a61c8c1baa",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b86d61bf-b598-4575-b3c5-ba553601ff29",
+              "name": "usermessage",
+              "value": "={{ $json.messages[0].text.body }}\n",
+              "type": "string"
+            },
+            {
+              "id": "17181c70-4e7d-47da-b786-df5231b6398d",
+              "name": "contacts[0].wa_id",
+              "value": "={{ $json.contacts[0].wa_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        280,
+        0
+      ],
+      "id": "e668d7c8-c59b-49f4-8d79-b728326c133b",
+      "name": "Preparar datos"
+    },
+    {
+      "parameters": {
+        "tableId": "n8n_chat_histories",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "session_id",
+              "fieldValue": "={{ $('Preparar datos').item.json.contacts[0].wa_id }}"
+            },
+            {
+              "fieldId": "message",
+              "fieldValue": "={{\n  ({\n    \"type\": \"human\",\n    \"content\": $node[\"Preparar datos\"].json.usermessage, // Asegúrate que esta sea la ruta al contenido del mensaje del usuario\n    \"additional_kwargs\": {},\n    \"response_metadata\": {}\n  })\n}}"
+            },
+            {
+              "fieldId": "sent_by_agent",
+              "fieldValue": "FALSE"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2060,
+        120
+      ],
+      "id": "88571573-610d-4aaa-9cf8-7fccce9bfffa",
+      "name": "Save talk agent",
+      "credentials": {
+        "supabaseApi": {
+          "id": "rdNcwtVOv9IJ9oTW",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1340,
+        -640
+      ],
+      "id": "7b4cb2af-4a6c-4a9f-9839-6c5b81ba6581",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "GohJfb0ApNvV69Sm",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "64a37068-07dc-428b-ad9f-ef930be1155c",
+              "name": "usermessage",
+              "value": "={{ $('Preparar datos').item.json.usermessage }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1940,
+        -500
+      ],
+      "id": "0db585f4-2c8a-4157-90bc-ae186440beb5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.output }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Atencion humana",
+              "description": "Clasifica la siguiente respuesta del agente de IA en una sola etiqueta:  - **notificar_humano**     Cuando el agente indica que no sabe, no puede resolver, necesita verificar, pide al usuario esperar o sugiere derivar a un humano.     Ejemplos típicos:     • “No dispongo de esa información en este momento.”     • “Permíteme verificar y vuelvo contigo.”     • “Lo siento, no puedo ayudarte con eso.”     • “Un momento por favor, contactaré a un agente humano.”     • “Ese dato no está disponible, te transfiero con un compañero.”"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        3020,
+        -320
+      ],
+      "id": "97fdbe3f-af02-4f21-8a06-1ce2318b010e",
+      "name": "Text Classifier2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3180,
+        -140
+      ],
+      "id": "adeecf1b-8d1d-4c97-8ec7-c4fe2e2d02f6",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "GohJfb0ApNvV69Sm",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "chat_sessions_state",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "session_id",
+              "keyValue": "={{ $json.contacts[0].wa_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        640,
+        -20
+      ],
+      "id": "af10f6a8-3196-46a1-bd12-48692fb3d982",
+      "name": "Dice el estado del bot",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "rdNcwtVOv9IJ9oTW",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tarvkyuezwyskshfgbmz.supabase.co/rest/v1/chat_sessions_state",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhcnZreXVlend5c2tzaGZnYm16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwMDA5NjgsImV4cCI6MjA1OTU3Njk2OH0.o7a6RNkolSckxjxYUlTH7SMNS1V8I0JJyZ2lJVJuR-o"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhcnZreXVlend5c2tzaGZnYm16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwMDA5NjgsImV4cCI6MjA1OTU3Njk2OH0.o7a6RNkolSckxjxYUlTH7SMNS1V8I0JJyZ2lJVJuR-o"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"session_id\": \"{{ $node['Preparar datos'].json.contacts[0].wa_id }}\",\n    \"status\": \"bot_active\",\n    \"last_updated\": \"{{ $now.toISO() }}\"\n  }\n]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        320
+      ],
+      "id": "ffd5af79-d20b-4af7-8525-ee69142f8027",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "511181228744198",
+        "recipientPhoneNumber": "={{ $('Preparar datos').item.json.contacts[0].wa_id }}",
+        "textBody": "={{ $json.output }}\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        2860,
+        -500
+      ],
+      "id": "9abc5b64-bddc-4244-a29b-d98d00b0b6fd",
+      "name": "WhatsApp Business Cloud1",
+      "webhookId": "b856b684-5fd8-4bf8-a25e-c82f317dadaf",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "LgPL35ZNq9HfHBIs",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.usermessage }}",
+        "options": {
+          "systemMessage": "Eres un asistente que recibe mensajes de usuarios que solicitan especificamente hablar con un humano,  responde de manera cortez diciendoles que eperen un momento que enseguida vas a conectar con un humano para que tome el chat"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        2420,
+        -500
+      ],
+      "id": "47de3593-0a30-4b8b-aba0-7af61d87efee",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2400,
+        -700
+      ],
+      "id": "36dd6908-872a-4d8e-8329-8e0c2df8a571",
+      "name": "OpenAI Chat Model4",
+      "credentials": {
+        "openAiApi": {
+          "id": "GohJfb0ApNvV69Sm",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Preparar datos').item.json.contacts[0].wa_id }}",
+        "contextWindowLength": 1
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        2600,
+        -700
+      ],
+      "id": "29f27803-ce15-4abd-a555-500666536d4d",
+      "name": "Postgres Chat Memory1",
+      "credentials": {
+        "postgres": {
+          "id": "hdUZRenROAXo2iau",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "37ea8e43-4924-464f-ade6-c66664ce9ab7",
+              "leftValue": "={{ $('Dice el estado del bot').item.json.status }}",
+              "rightValue": "bot_active",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "165b90fd-110f-403a-8dec-eab298bc18f9",
+              "leftValue": "={{ $('Dice el estado del bot').item.json.status }}",
+              "rightValue": "needs_agent",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1860,
+        -260
+      ],
+      "id": "d4d6f15b-a735-47ce-b188-c7b72ba047eb",
+      "name": "Estado del Bot1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "102398ea-24f0-4fa9-8ae2-0d82416299f3",
+              "leftValue": "={{ $json.session_id }}",
+              "rightValue": "bot_active",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        600,
+        320
+      ],
+      "id": "c5b65a0f-f61d-4f70-bf86-842a33036ac1",
+      "name": "Session existe"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tarvkyuezwyskshfgbmz.supabase.co/rest/v1/chat_sessions_state",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhcnZreXVlend5c2tzaGZnYm16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwMDA5NjgsImV4cCI6MjA1OTU3Njk2OH0.o7a6RNkolSckxjxYUlTH7SMNS1V8I0JJyZ2lJVJuR-o"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhcnZreXVlend5c2tzaGZnYm16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwMDA5NjgsImV4cCI6MjA1OTU3Njk2OH0.o7a6RNkolSckxjxYUlTH7SMNS1V8I0JJyZ2lJVJuR-o"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"session_id\": \"{{ $node['Preparar datos'].json.contacts[0].wa_id }}\",\n    \"status\": \"needs_agent\",\n    \"last_updated\": \"{{ $now.toISO() }}\"\n  }\n]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2200,
+        -500
+      ],
+      "id": "718d18ba-76f4-4e35-82a1-75e1a7e6cd74",
+      "name": "Status  needs_agent"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tarvkyuezwyskshfgbmz.supabase.co/rest/v1/chat_sessions_state",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhcnZreXVlend5c2tzaGZnYm16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwMDA5NjgsImV4cCI6MjA1OTU3Njk2OH0.o7a6RNkolSckxjxYUlTH7SMNS1V8I0JJyZ2lJVJuR-o"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhcnZreXVlend5c2tzaGZnYm16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwMDA5NjgsImV4cCI6MjA1OTU3Njk2OH0.o7a6RNkolSckxjxYUlTH7SMNS1V8I0JJyZ2lJVJuR-o"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"session_id\": \"{{ $node['Preparar datos'].json.contacts[0].wa_id }}\",\n    \"status\": \"needs_agent\",\n    \"last_updated\": \"{{ $now.toISO() }}\"\n  }\n]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3520,
+        -340
+      ],
+      "id": "ad3080a2-5a60-427a-b3be-3dc6d5fed3fb",
+      "name": "1Status  needs_agent"
+    }
+  ],
+  "pinData": {
+    "WhatsApp Trigger": [
+      {
+        "json": {
+          "messaging_product": "whatsapp",
+          "metadata": {
+            "display_phone_number": "593963158847",
+            "phone_number_id": "511181228744198"
+          },
+          "contacts": [
+            {
+              "profile": {
+                "name": "Geo😎"
+              },
+              "wa_id": "593962097200"
+            }
+          ],
+          "messages": [
+            {
+              "from": "593962097200",
+              "id": "wamid.HBgMNTkzOTYyMDk3MjAwFQIAEhggODgwNEI2MTQ2OURFRkFGM0QxRkY0RkU2MzU2MUJDRUYA",
+              "timestamp": "1748214816",
+              "text": {
+                "body": "A que gracioso, ya tengo de esos"
+              },
+              "type": "text"
+            }
+          ],
+          "field": "messages"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "InformacionEmpresa",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "WhatsApp Business Cloud",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "InformacionEmpresa",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "InformacionEmpresa": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Preparar datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar datos": {
+      "main": [
+        [
+          {
+            "node": "Dice el estado del bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Estado del Bot1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Estado del Bot1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Status  needs_agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dice el estado del bot": {
+      "main": [
+        [
+          {
+            "node": "Session existe",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "WhatsApp Business Cloud1": {
+      "main": [
+        []
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Business Cloud1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estado del Bot1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Save talk agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Session existe": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier2": {
+      "main": [
+        [
+          {
+            "node": "1Status  needs_agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status  needs_agent": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "83984d09-e802-40c7-8d21-ade269886330",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7c2afe09f27c55f2fcfac870b1b8d97098e0af280f9dc7c35083a4278c12c4a9"
+  },
+  "id": "JlVV7ZgoRhYQphFr",
+  "tags": []
+}
